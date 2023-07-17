@@ -78,33 +78,7 @@ main() {
   local r_right_separator
   r_right_separator=""
   readonly r_right_separator
-
-  local powerline_icons_theme_enabled
-  powerline_icons_theme_enabled="$(get_tmux_option "@catppuccin_powerline_icons_theme_enabled" "off")"
-  readonly powerline_icons_theme_enabled
-
-  local no_patched_fonts_theme_enabled
-  no_patched_fonts_theme_enabled="$(get_tmux_option "@catppuccin_no_patched_fonts_theme_enabled" "off")"
-  readonly no_patched_fonts_theme_enabled
-  
-  # Separators for the left status / window list 
-  local l_left_separator
-  l_left_separator="$(get_tmux_option "@catppuccin_l_left_separator" "")"
-  readonly l_left_separator
-
-  local l_right_separator
-  l_right_separator="$(get_tmux_option "@catppuccin_l_right_separator" "")"
-  readonly l_right_separator
-
-  # Separators for the right status 
-  local r_left_separator
-  r_left_separator="$(get_tmux_option "@catppuccin_r_left_separator" "")"
-  readonly r_left_separator
-
-  local r_right_separator
-  r_right_separator="$(get_tmux_option "@catppuccin_r_right_separator" "")"
-  readonly r_right_separator
-  
+  #
   local user
   user="$(get_tmux_option "@catppuccin_user" "off")"
   readonly user
@@ -116,7 +90,8 @@ main() {
   local date_time
   date_time="$(get_tmux_option "@catppuccin_date_time" "off")"
   readonly date_time
- 
+
+
   # Icons
   local directory_icon
   directory_icon="$(get_tmux_option "@catppuccin_directory_icon" "")"
@@ -147,8 +122,17 @@ main() {
   datetime_icon="$(get_tmux_option "@catppuccin_datetime_icon" "")"
   readonly datetime_icon
 
+  local battery_icon
+  battery_icon="$(get_tmux_option "@catppuccin_battery_icon" "")"
+  readonly battery_icon
+
+  local battery_charging_icon
+  battery_charging_icon="$(get_tmux_option "@catppuccin_battery_charging_icon" "")"
+  readonly battery_charging_icon
+
+
   # Source status line themes
-    source "$PLUGIN_DIR/$DEFAULT_STATUS_LINE_FILE"
+  source "$PLUGIN_DIR/$DEFAULT_STATUS_LINE_FILE"
 
   # Right column 1 by default shows the Window name.
   local right_column1=$show_window
@@ -168,28 +152,12 @@ main() {
     window_status_current_format=$show_window_in_window_status_current
   fi
 
-  if [[ "${user}" == "on" ]]; then
-    right_column2="$right_column2$show_user"
-  fi
-
-  if [[ "${host}" == "on" ]]; then
-    right_column2="$right_column2$show_host"
-  fi
-
-  if [[ "${date_time}" != "off" ]]; then
-    right_column2="$right_column2$show_date_time"
-  fi
-
   set status-left ""
   set status-right "${right_column1}${right_column2}"
 
   setw window-status-format "${window_status_format}"
   setw window-status-current-format "${window_status_current_format}"
 
-  # --------=== Modes
-  #
-  setw clock-mode-colour "${thm_blue}"
-  setw mode-style "fg=${thm_pink} bg=${thm_black4} bold"
 
   tmux "${tmux_commands[@]}"
 }
