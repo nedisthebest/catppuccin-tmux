@@ -79,6 +79,32 @@ main() {
   r_right_separator=""
   readonly r_right_separator
 
+  local powerline_icons_theme_enabled
+  powerline_icons_theme_enabled="$(get_tmux_option "@catppuccin_powerline_icons_theme_enabled" "off")"
+  readonly powerline_icons_theme_enabled
+
+  local no_patched_fonts_theme_enabled
+  no_patched_fonts_theme_enabled="$(get_tmux_option "@catppuccin_no_patched_fonts_theme_enabled" "off")"
+  readonly no_patched_fonts_theme_enabled
+  
+  # Separators for the left status / window list 
+  local l_left_separator
+  l_left_separator="$(get_tmux_option "@catppuccin_l_left_separator" "")"
+  readonly l_left_separator
+
+  local l_right_separator
+  l_right_separator="$(get_tmux_option "@catppuccin_l_right_separator" "")"
+  readonly l_right_separator
+
+  # Separators for the right status 
+  local r_left_separator
+  r_left_separator="$(get_tmux_option "@catppuccin_r_left_separator" "")"
+  readonly r_left_separator
+
+  local r_right_separator
+  r_right_separator="$(get_tmux_option "@catppuccin_r_right_separator" "")"
+  readonly r_right_separator
+  
   local user
   user="$(get_tmux_option "@catppuccin_user" "off")"
   readonly user
@@ -90,6 +116,11 @@ main() {
   local date_time
   date_time="$(get_tmux_option "@catppuccin_date_time" "off")"
   readonly date_time
+ 
+  # Icons
+  local directory_icon
+  directory_icon="$(get_tmux_option "@catppuccin_directory_icon" "")"
+  readonly directory_icon
 
   # Icons
   local directory_icon
