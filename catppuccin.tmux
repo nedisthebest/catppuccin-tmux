@@ -138,8 +138,8 @@ main() {
   local right_column1=$show_window
 
   # Right column 2 by default shows the current Session name.
-  #local right_column2=$show_session
-  local right_column2=$show_battery
+  local right_column2=$show_session
+  #local right_column2=$show_battery
 
   # Window status by default shows the current directory basename.
   local window_status_format=$show_directory_in_window_status
@@ -149,7 +149,7 @@ main() {
   # update the right_column1 and the window_status_* variables.
 
   set status-left ""
-  set status-right "${right_column1}${right_column2}"
+  set status-right "${show_user}${right_column1}${right_column2}"
 
   setw window-status-format "${window_status_format}"
   setw window-status-current-format "${window_status_current_format}"
