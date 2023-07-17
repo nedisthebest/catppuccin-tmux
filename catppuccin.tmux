@@ -138,7 +138,8 @@ main() {
   local right_column1=$show_window
 
   # Right column 2 by default shows the current Session name.
-  local right_column2=$show_session
+  #local right_column2=$show_session
+  local right_column2=$show_battery
 
   # Window status by default shows the current directory basename.
   local window_status_format=$show_directory_in_window_status
