@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 PLUGIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DEFAULT_STATUS_LINE_FILE=src/default.conf
 
 get_tmux_option() {
   local option value default
@@ -60,18 +61,23 @@ main() {
 
   # --------=== Statusline
 
-  # NOTE: Checking for the value of @catppuccin_window_tabs_enabled
-  local wt_enabled
-  wt_enabled="$(get_tmux_option "@catppuccin_window_tabs_enabled" "off")"
-  readonly wt_enabled
+  # Separators for the left status / window list
+  local l_left_separator
+  l_left_separator=""
+  readonly l_left_separator
 
-  local right_separator
-  right_separator="$(get_tmux_option "@catppuccin_right_separator" "")"
-  readonly right_separator
+  local l_right_separator
+  l_right_separator=""
+  readonly l_right_separator
 
-  local left_separator
-  left_separator="$(get_tmux_option "@catppuccin_left_separator" "")"
-  readonly left_separator
+  # Separators for the right status
+  local r_left_separator
+  r_left_separator=""
+  readonly r_left_separator
+
+  local r_right_separator
+  r_right_separator=""
+  readonly r_right_separator
 
   local user
   user="$(get_tmux_option "@catppuccin_user" "off")"
@@ -85,40 +91,33 @@ main() {
   date_time="$(get_tmux_option "@catppuccin_date_time" "off")"
   readonly date_time
 
-  # These variables are the defaults so that the setw and set calls are easier to parse.
-  local show_directory
-  readonly show_directory="#[fg=$thm_pink,bg=$thm_bg,nobold,nounderscore,noitalics]$right_separator#[fg=$thm_bg,bg=$thm_pink,nobold,nounderscore,noitalics]  #[fg=$thm_fg,bg=$thm_gray] #{b:pane_current_path} #{?client_prefix,#[fg=$thm_red]"
+  # Icons
+  local directory_icon
+  directory_icon="$(get_tmux_option "@catppuccin_directory_icon" "")"
+  readonly directory_icon
 
-  local show_window
-  readonly show_window="#[fg=$thm_pink,bg=$thm_bg,nobold,nounderscore,noitalics]$right_separator#[fg=$thm_bg,bg=$thm_pink,nobold,nounderscore,noitalics] #[fg=$thm_fg,bg=$thm_gray] #W #{?client_prefix,#[fg=$thm_red]"
+  local window_icon
+  window_icon="$(get_tmux_option "@catppuccin_window_icon" "")"
+  readonly window_icon
 
-  local show_session
-  readonly show_session="#[fg=$thm_green]}#[bg=$thm_gray]$right_separator#{?client_prefix,#[bg=$thm_red],#[bg=$thm_green]}#[fg=$thm_bg] #[fg=$thm_fg,bg=$thm_gray] #S "
+  local session_icon
+  session_icon="$(get_tmux_option "@catppuccin_session_icon" "")"
+  readonly session_icon
 
-  local show_directory_in_window_status
-  #readonly show_directory_in_window_status="#[fg=$thm_bg,bg=$thm_blue] #I #[fg=$thm_fg,bg=$thm_gray] #{b:pane_current_path} "
-  readonly show_directory_in_window_status="#[fg=$thm_bg,bg=$thm_blue] #I #[fg=$thm_fg,bg=$thm_gray] #W "
+  local user_icon
+  user_icon="$(get_tmux_option "@catppuccin_user_icon" "")"
+  readonly user_icon
 
-  local show_directory_in_window_status_current
-  #readonly show_directory_in_window_status_current="#[fg=$thm_bg,bg=$thm_orange] #I #[fg=$thm_fg,bg=$thm_bg] #{b:pane_current_path} "
-  readonly show_directory_in_window_status_current="#[fg=colour232,bg=$thm_orange] #I #[fg=colour255,bg=colour237] #(echo '#{pane_current_path}' | rev | cut -d'/' -f-2 | rev) "
+  local host_icon
+  host_icon="$(get_tmux_option "@catppuccin_host_icon" "󰒋")"
+  readonly host_icon
 
-  local show_window_in_window_status
-  readonly show_window_in_window_status="#[fg=$thm_fg,bg=$thm_bg] #W #[fg=$thm_bg,bg=$thm_blue] #I#[fg=$thm_blue,bg=$thm_bg]$left_separator#[fg=$thm_fg,bg=$thm_bg,nobold,nounderscore,noitalics] "
+  local datetime_icon
+  datetime_icon="$(get_tmux_option "@catppuccin_datetime_icon" "")"
+  readonly datetime_icon
 
-  local show_window_in_window_status_current
-  readonly show_window_in_window_status_current="#[fg=$thm_fg,bg=$thm_gray] #W #[fg=$thm_bg,bg=$thm_orange] #I#[fg=$thm_orange,bg=$thm_bg]$left_separator#[fg=$thm_fg,bg=$thm_bg,nobold,nounderscore,noitalics] "
- #setw -g window-status-current-format "#[fg=colour232,bg=$thm_orange] #I #[fg=colour255,bg=colour237] #(echo '#{pane_current_path}' | rev | cut -d'/' -f-2 | rev) "
-
-
-  local show_user
-  readonly show_user="#[fg=$thm_blue,bg=$thm_gray]$right_separator#[fg=$thm_bg,bg=$thm_blue] #[fg=$thm_fg,bg=$thm_gray] #(whoami) "
-
-  local show_host
-  readonly show_host="#[fg=$thm_blue,bg=$thm_gray]$right_separator#[fg=$thm_bg,bg=$thm_blue]󰒋 #[fg=$thm_fg,bg=$thm_gray] #H "
-
-  local show_date_time
-  readonly show_date_time="#[fg=$thm_blue,bg=$thm_gray]$right_separator#[fg=$thm_bg,bg=$thm_blue] #[fg=$thm_fg,bg=$thm_gray] $date_time "
+  # Source status line themes
+    source "$PLUGIN_DIR/$DEFAULT_STATUS_LINE_FILE"
 
   # Right column 1 by default shows the Window name.
   local right_column1=$show_window
@@ -139,20 +138,19 @@ main() {
   fi
 
   if [[ "${user}" == "on" ]]; then
-    right_column2=$right_column2$show_user
+    right_column2="$right_column2$show_user"
   fi
 
   if [[ "${host}" == "on" ]]; then
-    right_column2=$right_column2$show_host
+    right_column2="$right_column2$show_host"
   fi
 
   if [[ "${date_time}" != "off" ]]; then
-    right_column2=$right_column2$show_date_time
+    right_column2="$right_column2$show_date_time"
   fi
 
   set status-left ""
-
-  set status-right "${right_column1},${right_column2}"
+  set status-right "${right_column1}${right_column2}"
 
   setw window-status-format "${window_status_format}"
   setw window-status-current-format "${window_status_current_format}"
